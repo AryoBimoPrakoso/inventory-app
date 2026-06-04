@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id                            String   @id @default(cuid())
+
+  // Kop Surat
+  nomor                         String?
+  tanggalTerbit                 DateTime?
+  nomorRevisi                   String?
+  jumlahHalaman                 Int?
+
+  // Identitas Barang
+  nama                          String
+  merk                          String?
+  type                          String?
+  sn                            String?
+
+  // Pembelian
+  tanggalPembelian              DateTime?
+  tanggalTerimaBarang           DateTime?
+  kondisiSaatDiterima           String?
+  klasifikasi                   String?
+
+  // Pemeriksaan
+  tanggalPengecekan             DateTime?
+  hasilPengecekan               String?
+  namaPemeriksa                 String?
+
+  // Inventaris
+  tanggalInventaris             DateTime?
+  nomorInventaris               String?
+  lokasi                        String?
+  hasilInventaris               String?
+  tanggalPemeliharaanKalibrasi  DateTime?
+
+  attachments                   Attachment[]
+
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+
+  fileName  String
+  filePath  String
+
+  itemId    String
+  item      Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
