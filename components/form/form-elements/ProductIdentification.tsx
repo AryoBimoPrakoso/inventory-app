@@ -1,28 +1,49 @@
 "use client";
-import Label from '../Label';
-import Input from '../input/InputField';
-import DatePicker from '@/components/form/date-picker';
-import ComponentCard from '@/components/common/ComponentCard';
 
-export default function ProductIdentification() {
+import ComponentCard from "@/components/common/ComponentCard";
+import Label from "../Label";
+import Input from "../input/InputField";
+
+interface ProductIdentificationProps {
+  formData: any;
+  onChange: (field: string, value: any) => void;
+}
+
+export default function ProductIdentification({ formData, onChange }: ProductIdentificationProps) {
   return (
-    <ComponentCard title="Identitas Barang">
+    <ComponentCard title="Identifikasi Produk">
       <div className="space-y-6">
         <div>
-          <Label>Nama</Label>
-          <Input type="text" />
+          <Label>Nama Alat/Fasilitas/Sistem</Label>
+          <Input 
+            type="text" 
+            value={formData.nama || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("nama", e.target.value)}
+          />
         </div>
         <div>
-          <Label>Merk</Label>
-          <Input type="text" />
+          <Label>Merk/Pabrik Pembuat</Label>
+          <Input 
+            type="text" 
+            value={formData.merk || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("merk", e.target.value)}
+          />
         </div>
         <div>
-          <Label>Type</Label>
-          <Input type="text" />
+          <Label>Type/Model</Label>
+          <Input 
+            type="text" 
+            value={formData.type || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("type", e.target.value)}
+          />
         </div>
         <div>
-          <Label>SN</Label>
-          <Input type="text" />
+          <Label>Nomor Seri (S/N)</Label>
+          <Input 
+            type="text" 
+            value={formData.sn || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("sn", e.target.value)}
+          />
         </div>
       </div>
     </ComponentCard>

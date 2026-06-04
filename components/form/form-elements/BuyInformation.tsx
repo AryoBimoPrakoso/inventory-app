@@ -1,64 +1,63 @@
 "use client";
-import React, { useState } from "react";
-import Label from "../Label";
-import Input from "../input/InputField";
-import Select from "../Select";
-import {
-  ChevronDown,
-  EyeClosed,
-  Eye,
-  ChevronDownIcon,
-  EyeIcon,
-} from "lucide-react";
-import DatePicker from "@/components/form/date-picker";
-import ComponentCard from "@/components/common/ComponentCard";
 
-export default function PurchaseInput() {
-  const optionsConditions = [
+import ComponentCard from "@/components/common/ComponentCard";
+import Label from "../Label";
+import DatePicker from "@/components/form/date-picker";
+import Select from "../Select";
+import { ChevronDownIcon } from "lucide-react";
+
+interface PurchaseInputProps {
+  formData: any;
+  onChange: (field: string, value: any) => void;
+}
+
+export default function PurchaseInput({ formData, onChange }: PurchaseInputProps) {
+  // Opsi untuk Kondisi Saat Diterima
+  const kondisiOptions = [
     { value: "baru", label: "Baru" },
     { value: "bekas", label: "Bekas" },
   ];
-  const optionsClassifications = [
-    { value: "perlengkapan-kantor", label: "Perlengkapan kantor" },
-    { value: "alat-standar-ruang-lingkup", label: "Alat standar ruang lingkup" },
+
+  // Opsi untuk Klasifikasi Alat (bisa Anda tambahkan opsinya di sini sesuai kebutuhan)
+  const klasifikasiOptions = [
     { value: "artefak", label: "Artefak" },
+    { value: "perlengkapan-kantor", label: "Perlengkapan Kantor" },
+    { value: "alat-standar-ruang-lingkup", label: "Alat Standar Ruang Lingkup" },
     { value: "lain-lain", label: "Lain-lain" },
   ];
-  const handleSelectChange = (value: string) => {
-    console.log("Selected value:", value);
-  };
+
   return (
     <ComponentCard title="Informasi Pembelian">
       <div className="space-y-6">
         <div>
           <DatePicker
-            id="date-picker"
+            id="tanggalPembelian"
             label="Tanggal Pembelian"
             placeholder="Pilih Tanggal"
             onChange={(dates, currentDateString) => {
-              // Handle your logic
-              console.log({ dates, currentDateString });
+              onChange("tanggalPembelian", currentDateString);
             }}
           />
         </div>
         <div>
           <DatePicker
-            id="date-picker"
+            id="tanggalTermaBarang"
             label="Tanggal Terima Barang"
             placeholder="Pilih Tanggal"
             onChange={(dates, currentDateString) => {
-              // Handle your logic
-              console.log({ dates, currentDateString });
+              onChange("tanggalTerimaBarang", currentDateString);
             }}
           />
         </div>
+        
+        {/* Mengubah Kondisi Saat Diterima menjadi Select */}
         <div>
-          <Label>Kondisi saat Diterima</Label>
+          <Label>Kondisi Saat Diterima</Label>
           <div className="relative">
             <Select
-              options={optionsConditions}
-              placeholder="Pilih"
-              onChange={handleSelectChange}
+              options={kondisiOptions}
+              placeholder="Pilih Kondisi"
+              onChange={(value: string) => onChange("kondisiSaatDiterima", value)}
               className="dark:bg-dark-900"
             />
             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
@@ -66,15 +65,15 @@ export default function PurchaseInput() {
             </span>
           </div>
         </div>
-      </div>
-      <div>
+
+        {/* Mengubah Klasifikasi Alat menjadi Select */}
         <div>
-          <Label>Kondisi saat Diterima</Label>
+          <Label>Klasifikasi Alat</Label>
           <div className="relative">
             <Select
-              options={optionsClassifications}
-              placeholder="Pilih"
-              onChange={handleSelectChange}
+              options={klasifikasiOptions}
+              placeholder="Pilih Klasifikasi"
+              onChange={(value: string) => onChange("klasifikasi", value)}
               className="dark:bg-dark-900"
             />
             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">

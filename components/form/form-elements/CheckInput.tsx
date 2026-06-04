@@ -1,41 +1,47 @@
 "use client";
-import Label from '../Label';
-import Input from '../input/InputField';
-import DatePicker from '@/components/form/date-picker';
-import ComponentCard from '@/components/common/ComponentCard';
-import Select from "../Select";
-import { ChevronDownIcon } from 'lucide-react';
 
-export default function CheckInput() {
-    const optionsFixing = [
-    { value: "berfungsi-baik", label: "Berfungsi Baik" },
+import ComponentCard from "@/components/common/ComponentCard";
+import Label from "../Label";
+import Input from "../input/InputField";
+import DatePicker from "@/components/form/date-picker";
+import Select from "../Select";
+import { ChevronDownIcon } from "lucide-react";
+
+interface CheckInputProps {
+  formData: any;
+  onChange: (field: string, value: any) => void;
+}
+
+export default function CheckInput({ formData, onChange }: CheckInputProps) {
+  // Opsi Hasil Pengecekan yang dipindahkan
+  const hasilPengecekanOptions = [
+    { value: "baik", label: "Baik" },
     { value: "perlu-diperbaiki", label: "Perlu Diperbaiki" },
     { value: "rusak", label: "Rusak" },
   ];
-  const handleSelectChange = (value: string) => {
-    console.log("Selected value:", value);
-  };
+
   return (
-    <ComponentCard title="Cek Kondisi dan Fungsi">
+    <ComponentCard title="Pemeriksaan">
       <div className="space-y-6">
         <div>
           <DatePicker
-            id="date-picker"
+            id="tanggalPengecekan"
             label="Tanggal Pengecekan"
             placeholder="Pilih Tanggal"
             onChange={(dates, currentDateString) => {
-              // Handle your logic
-              console.log({ dates, currentDateString });
+              onChange("tanggalPengecekan", currentDateString);
             }}
           />
         </div>
+
+        {/* Pindahan dari Inventaris Form & Diubah menjadi Select */}
         <div>
-          <Label>Hasil</Label>
+          <Label>Hasil Pengecekan</Label>
           <div className="relative">
             <Select
-              options={optionsFixing}
-              placeholder="Pilih"
-              onChange={handleSelectChange}
+              options={hasilPengecekanOptions}
+              placeholder="Pilih Hasil Pemeriksaan"
+              onChange={(value: string) => onChange("hasilPengecekan", value)}
               className="dark:bg-dark-900"
             />
             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
@@ -43,9 +49,14 @@ export default function CheckInput() {
             </span>
           </div>
         </div>
+
         <div>
           <Label>Nama Pemeriksa</Label>
-          <Input type="text" />
+          <Input 
+            type="text" 
+            value={formData.namaPemeriksa || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("namaPemeriksa", e.target.value)}
+          />
         </div>
       </div>
     </ComponentCard>

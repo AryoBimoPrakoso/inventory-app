@@ -1,37 +1,68 @@
 "use client";
 import React, { useState } from "react";
-import ComponentCard from "../../common/ComponentCard";
-import FileInput from "../input/FileInput";
+import ComponentCard from "@/components/common/ComponentCard";
+import InputFile from "../input/FileInput";
 import Label from "../Label";
 
-export default function FileInputExample() {
+interface FileInputProps {
+  onFileChange: (files: FileList | null) => void;
+}
+
+export default function FileInputExample({ onFileChange }: FileInputProps) {
   // State untuk menyimpan daftar file yang di-upload
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  // Fungsi helper untuk mengubah Array File menjadi FileList dan mengirim ke parent
+  const updateParentFiles = (filesArray: File[]) => {
+    if (filesArray.length === 0) {
+      onFileChange(null);
+      return;
+    }
+
+    // Menggunakan DataTransfer API untuk membuat tiruan objek FileList
+    const dataTransfer = new DataTransfer();
+    filesArray.forEach((file) => {
+      dataTransfer.items.add(file);
+    });
     
-    if (file) {
-      // Menambahkan file baru ke dalam array state tanpa menghapus file sebelumnya
-      setUploadedFiles((prevFiles) => [...prevFiles, file]);
+    // Kirim FileList ke parent component
+    onFileChange(dataTransfer.files);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    
+    if (files && files.length > 0) {
+      // Mengubah FileList dari input menjadi array biasa
+      const newFilesArray = Array.from(files);
+
+      // Gabungkan file lama dengan file baru (mengizinkan penambahan bertahap)
+      const updatedFilesList = [...uploadedFiles, ...newFilesArray];
       
-      // Reset input value agar user bisa upload file dengan nama yang sama berturut-turut jika dibutuhkan
+      setUploadedFiles(updatedFilesList);
+      updateParentFiles(updatedFilesList);
+
+      // Reset input value agar user bisa upload file dengan nama yang sama berturut-turut
       event.target.value = "";
     }
   };
 
-  // Fungsi opsional jika Anda ingin memberikan fitur hapus file dari list
   const handleRemoveFile = (indexToRemove: number) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToRemove)
-    );
+    const updatedFilesList = uploadedFiles.filter((_, index) => index !== indexToRemove);
+    
+    setUploadedFiles(updatedFilesList);
+    updateParentFiles(updatedFilesList);
   };
 
   return (
     <ComponentCard title="Kelengkapan" className="h-max">
       <div className="mb-4">
-        <Label>Upload file</Label>
-        <FileInput onChange={handleFileChange} className="custom-class" />
+        <Label htmlFor="attachments">Upload file</Label>
+        <InputFile 
+          id="attachments" 
+          onChange={handleFileChange} 
+          multiple // Izinkan upload banyak file sekaligus jika perlu
+        />
       </div>
 
       {/* Bagian List Urutan File */}
@@ -48,7 +79,6 @@ export default function FileInputExample() {
                 className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200 text-sm"
               >
                 <div className="flex items-center gap-2">
-                  {/* Membuat urutan manual (1, 2, 3...) */}
                   <span className="font-medium text-gray-500">{index + 1}.</span>
                   <span className="text-gray-700 truncate max-w-[200px] lg:max-w-xs">
                     {file.name}
