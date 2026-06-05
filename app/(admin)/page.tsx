@@ -1,8 +1,9 @@
-import AppSidebar from "@/layout/AppSidebar";
-import Image from "next/image";
+import CreateProductWrapper from "@/components/form/wrapper/CreateStockWrapper";
 
 export default function Home() {
   return (
-    <AppSidebar/>
+    <div>
+      1
+    </div>
   );
 }

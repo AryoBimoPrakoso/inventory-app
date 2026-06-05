@@ -12,7 +12,7 @@ interface LetterHeadInputProps {
 
 export default function LetterHeadInput({ formData, onChange }: LetterHeadInputProps) {
   return (
-    <ComponentCard title="Kop Surat">
+    <ComponentCard title="Kop Surat - Lengkapi Jika ingin ekspor PDF">
       <div className="space-y-6">
         <div>
           <Label>Nomor</Label>

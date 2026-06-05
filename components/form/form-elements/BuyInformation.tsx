@@ -11,7 +11,7 @@ interface PurchaseInputProps {
   onChange: (field: string, value: any) => void;
 }
 
-export default function PurchaseInput({ formData, onChange }: PurchaseInputProps) {
+export default function BuyInformation({ formData, onChange }: PurchaseInputProps) {
   // Opsi untuk Kondisi Saat Diterima
   const kondisiOptions = [
     { value: "baru", label: "Baru" },
