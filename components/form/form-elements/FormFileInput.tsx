@@ -8,7 +8,7 @@ interface FileInputProps {
   onFileChange: (files: FileList | null) => void;
 }
 
-export default function FileInputExample({ onFileChange }: FileInputProps) {
+export default function FormFileInput({ onFileChange }: FileInputProps) {
   // State untuk menyimpan daftar file yang di-upload
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 

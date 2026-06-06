@@ -3,15 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Digunakan untuk refresh data server
 import LetterHeadInput from "@/components/form/form-elements/LetterHeadInput";
-import FileInput from "@/components/form/form-elements/FileInput";
+import FormFileInput from "@/components/form/form-elements/FormFileInput";
 import BuyInformation from "@/components/form/form-elements/BuyInformation";
 import ProductIdentification from "@/components/form/form-elements/ProductIdentification";
 import CheckInput from "@/components/form/form-elements/CheckInput";
 import InventoryForm from "@/components/form/form-elements/InventoryForm";
 import Button from "@/components/ui/button/Button";
-import ComponentCard from "@/components/common/ComponentCard";
 import Modal from "@/components/ui/modal/Modal";
-import { Trash2, Plus, Eye, Edit } from "lucide-react";
+import { Plus } from "lucide-react";
 import CreateProductWrapper from "@/components/form/wrapper/CreateStockWrapper";
 import StockTable from "@/components/common/table/StockTable";
 import DetailCardStock from "@/components/common/card/DetailCardStock";
@@ -57,6 +56,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
   };
 
   const handleOpenEdit = (item: any) => {
+    console.log(item.nama)
     setSelectedItem(item);
     setModalMode("edit");
     
@@ -165,7 +165,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
         }
       >
         {modalMode === "create" ? (
-          <CreateProductWrapper formData={formData} onChange={handleChange} onSubmit={handleSubmit} setIsModalOpen={setIsModalOpen} loading={loading}/>
+          <CreateProductWrapper formData={formData} onChange={handleChange} onSubmit={handleSubmit} setIsModalOpen={setIsModalOpen} loading={loading} setSelectedFiles={setSelectedFiles}/>
         ) : modalMode === "edit" ? (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -177,7 +177,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
               <div className="flex flex-col gap-6">
                 <ProductIdentification formData={formData} onChange={handleChange} />
                 <CheckInput formData={formData} onChange={handleChange} />
-                <FileInput onFileChange={setSelectedFiles} />
+                <FormFileInput onFileChange={setSelectedFiles} />
                 {modalMode === "edit" && selectedItem?.attachments?.length > 0 && (
                   <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">File Lampiran Saat Ini:</p>

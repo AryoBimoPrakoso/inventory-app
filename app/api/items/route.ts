@@ -29,13 +29,11 @@ export async function POST(req: Request) {
     const lokasi = formData.get("lokasi") as string | null;
     const hasilInventaris = formData.get("hasilInventaris") as string | null;
 
-    // Helper fungsi untuk merubah string ke Date objek dengan aman
     const parseDate = (key: string) => {
       const val = formData.get(key);
       return val ? new Date(val as string) : null;
     };
 
-    // 3. Membuat record Item di database SQLite menggunakan Prisma
     const item = await prisma.item.create({
       data: {
         nomor,
