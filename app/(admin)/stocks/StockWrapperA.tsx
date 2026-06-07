@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Digunakan untuk refresh data server
+import { useRouter } from "next/navigation";
 import LetterHeadInput from "@/components/form/form-elements/LetterHeadInput";
 import FormFileInput from "@/components/form/form-elements/FormFileInput";
 import BuyInformation from "@/components/form/form-elements/BuyInformation";
@@ -10,10 +10,11 @@ import CheckInput from "@/components/form/form-elements/CheckInput";
 import InventoryForm from "@/components/form/form-elements/InventoryForm";
 import Button from "@/components/ui/button/Button";
 import Modal from "@/components/ui/modal/Modal";
-import { Plus } from "lucide-react";
+import { Plus, ClipboardCheck } from "lucide-react";
 import CreateProductWrapper from "@/components/form/wrapper/CreateStockWrapper";
 import StockTable from "@/components/common/table/StockTable";
 import DetailCardStock from "@/components/common/card/DetailCardStock";
+import EditStockWrapper from "@/components/form/wrapper/EditStockWrapper";
 
 interface ClientProps {
   initialItems: any[];
@@ -22,23 +23,78 @@ interface ClientProps {
 export default function StockInventaris({ initialItems }: ClientProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"create" | "detail" | "edit">("create");
+  const [modalMode, setModalMode] = useState<
+    "create" | "detail" | "edit" | "pemeriksaan"
+  >("create");
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const initialFormState = {
-    nomor: "", tanggalTerbit: "", nomorRevisi: "", jumlahHalaman: null as number | null,
-    nama: "", merk: "", type: "", sn: "",
-    tanggalPembelian: "", tanggalTerimaBarang: "", kondisiSaatDiterima: "", klasifikasi: "",
-    tanggalPengecekan: "", hasilPengecekan: "", namaPemeriksa: "",
-    tanggalInventaris: "", nomorInventaris: "", lokasi: "", tanggalPemeliharaanKalibrasi: "",
+    itemId: "", 
+    nomor: "",
+    tanggalTerbit: "",
+    nomorRevisi: "",
+    jumlahHalaman: null as number | null,
+    nama: "",
+    merk: "",
+    type: "",
+    sn: "",
+    tanggalPembelian: "",
+    tanggalTerimaBarang: "",
+    kondisiSaatDiterima: "",
+    klasifikasi: "",
+    tanggalPengecekan: "",
+    hasilPengecekan: "",
+    namaPemeriksa: "",
+    tanggalInventaris: "",
+    nomorInventaris: "",
+    lokasi: "",
+    tanggalPemeliharaanKalibrasi: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
+  const namaOptions = initialItems.map((item) => ({
+    value: item.id, 
+    label: item.nama,
+  }));
+
   const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const updatedForm = { ...prev, [field]: value };
+
+      if (field === "itemId" && modalMode === "pemeriksaan") {
+        const barangTerpilih = initialItems.find((item) => item.id === value);
+
+        if (barangTerpilih) {
+          // Amankan seluruh data lama agar tidak menjadi string kosong/null saat PUT ke route.ts
+          updatedForm.nomor = barangTerpilih.nomor || "";
+          updatedForm.tanggalTerbit = barangTerpilih.tanggalTerbit ? new Date(barangTerpilih.tanggalTerbit).toISOString().split("T")[0] : "";
+          updatedForm.nomorRevisi = barangTerpilih.nomorRevisi || "";
+          updatedForm.jumlahHalaman = barangTerpilih.jumlahHalaman ?? null;
+          updatedForm.nama = barangTerpilih.nama || "";
+          updatedForm.merk = barangTerpilih.merk || "";
+          updatedForm.type = barangTerpilih.type || "";
+          updatedForm.sn = barangTerpilih.sn || "";
+          updatedForm.tanggalPembelian = barangTerpilih.tanggalPembelian ? new Date(barangTerpilih.tanggalPembelian).toISOString().split("T")[0] : "";
+          updatedForm.tanggalTerimaBarang = barangTerpilih.tanggalTerimaBarang ? new Date(barangTerpilih.tanggalTerimaBarang).toISOString().split("T")[0] : "";
+          updatedForm.kondisiSaatDiterima = barangTerpilih.kondisiSaatDiterima || "";
+          updatedForm.klasifikasi = barangTerpilih.klasifikasi || "";
+          updatedForm.tanggalInventaris = barangTerpilih.tanggalInventaris ? new Date(barangTerpilih.tanggalInventaris).toISOString().split("T")[0] : "";
+          updatedForm.nomorInventaris = barangTerpilih.nomorInventaris || "";
+          updatedForm.lokasi = barangTerpilih.lokasi || "";
+          updatedForm.tanggalPemeliharaanKalibrasi = barangTerpilih.tanggalPemeliharaanKalibrasi ? new Date(barangTerpilih.tanggalPemeliharaanKalibrasi).toISOString().split("T")[0] : "";
+
+          // Set default field pemeriksaan
+          updatedForm.tanggalPengecekan = new Date().toISOString().split("T")[0];
+          updatedForm.hasilPengecekan = barangTerpilih.hasilPengecekan || "baik";
+          updatedForm.namaPemeriksa = barangTerpilih.namaPemeriksa || "";
+        }
+      }
+
+      return updatedForm;
+    });
   };
 
   const handleOpenCreate = () => {
@@ -49,6 +105,13 @@ export default function StockInventaris({ initialItems }: ClientProps) {
     setIsModalOpen(true);
   };
 
+  const handleOpenChecking = () => {
+    setModalMode("pemeriksaan");
+    setSelectedItem(null);
+    setFormData(initialFormState); 
+    setIsModalOpen(true);
+  };
+
   const handleOpenDetail = (item: any) => {
     setSelectedItem(item);
     setModalMode("detail");
@@ -56,16 +119,16 @@ export default function StockInventaris({ initialItems }: ClientProps) {
   };
 
   const handleOpenEdit = (item: any) => {
-    console.log(item.nama)
     setSelectedItem(item);
     setModalMode("edit");
-    
+
     const formatDate = (dateStr: string | null) => {
       if (!dateStr) return "";
       return new Date(dateStr).toISOString().split("T")[0];
     };
 
     setFormData({
+      itemId: item.id || "",
       nomor: item.nomor || "",
       tanggalTerbit: formatDate(item.tanggalTerbit),
       nomorRevisi: item.nomorRevisi || "",
@@ -98,7 +161,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
       const response = await fetch(`/api/items/${id}`, { method: "DELETE" });
       if (response.ok) {
         alert("Data berhasil dihapus!");
-        router.refresh(); // Memicu server component untuk mengambil data ulang lewat Prisma
+        router.refresh();
       }
     } catch (error) {
       console.error(error);
@@ -107,103 +170,156 @@ export default function StockInventaris({ initialItems }: ClientProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi proteksi: Jangan biarkan submit berjalan jika id barang belum dipilih di mode pemeriksaan
+    if (modalMode === "pemeriksaan" && !formData.itemId) {
+      alert("Silakan pilih nama data / produk terlebih dahulu!");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const dataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) dataToSend.append(key, value.toString());
+        if (value !== null && value !== undefined)
+          dataToSend.append(key, value.toString());
       });
       if (selectedFiles) {
-        for (let i = 0; i < selectedFiles.length; i++) dataToSend.append("files", selectedFiles[i]);
+        for (let i = 0; i < selectedFiles.length; i++)
+          dataToSend.append("files", selectedFiles[i]);
       }
 
-      const url = modalMode === "edit" ? `/api/items/${selectedItem.id}` : "/api/items";
-      const method = modalMode === "edit" ? "PUT" : "POST";
+      let url = "/api/items";
+      let method = "POST";
+
+      if (modalMode === "edit") {
+        url = `/api/items/${selectedItem?.id}`;
+        method = "PUT";
+      } else if (modalMode === "pemeriksaan") {
+        url = `/api/items/${formData.itemId}`; 
+        method = "PUT";
+      }
 
       const response = await fetch(url, { method: method, body: dataToSend });
-      
+
       if (response.ok) {
-        alert(modalMode === "edit" ? "Data inventaris berhasil diperbarui!" : "Data inventaris berhasil disimpan!");
+        alert(
+          modalMode === "edit"
+            ? "Data inventaris berhasil diperbarui!"
+            : modalMode === "pemeriksaan"
+              ? "Data pemeriksaan berhasil disimpan!"
+              : "Data inventaris berhasil disimpan!",
+        );
         setFormData(initialFormState);
         setSelectedFiles(null);
         setIsModalOpen(false);
-        router.refresh(); // Memicu server component untuk mengambil data terbaru dari database
+        router.refresh();
       } else {
-        const errorData = await response.json();
-        alert(`Gagal: ${errorData.message}`);
+        // PERTAHANAN KUNCI: Cek Content-Type sebelum memanggil .json() agar tidak memicu SyntaxError
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          alert(`Gagal: ${errorData.message}`);
+        } else {
+          const rawText = await response.text();
+          console.error("Server Error Response Raw:", rawText);
+          alert(`Gagal dengan status HTTP ${response.status}. Hubungi backend / cek console log server.`);
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error("Terjadi error pada client request:", error);
+      alert("Terjadi kegagalan koneksi atau error internal browser.");
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDateString = (dateStr: string | null) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
-  };
-
   return (
     <>
-      {/* Tombol diletakkan di wrapper agar sinkron dengan state open modal */}
-      <div className="flex justify-end -mt-14 mb-8">
-        <Button onClick={handleOpenCreate} className="flex items-center gap-2 w-full sm:w-auto">
+      <div className="flex justify-end gap-3 -mt-14 mb-8">
+        <Button
+          variant="outline"
+          onClick={handleOpenChecking}
+          className="flex items-center gap-2 w-full sm:w-auto"
+        >
+          <ClipboardCheck className="w-4 h-4" /> Pemeriksaan Barang
+        </Button>
+        <Button
+          onClick={handleOpenCreate}
+          className="flex items-center gap-2 w-full sm:w-auto"
+        >
           <Plus className="w-4 h-4" /> Tambah Barang Baru
         </Button>
       </div>
 
-      {/* DYNAMIC MODAL */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         title={
-          modalMode === "create" ? "Form Input Inventaris Baru" : 
-          modalMode === "edit" ? `Edit Data Barang: ${selectedItem?.nama}` : 
-          `Detail Spesifikasi: ${selectedItem?.nama}`
+          modalMode === "create"
+            ? "Form Input Inventaris Baru"
+            : modalMode === "edit"
+              ? `Edit Data Barang: ${selectedItem?.nama}`
+              : modalMode === "pemeriksaan"
+                ? "Form Pemeriksaan Kondisi Barang"
+                : `Detail Spesifikasi: ${selectedItem?.nama}`
         }
       >
         {modalMode === "create" ? (
-          <CreateProductWrapper formData={formData} onChange={handleChange} onSubmit={handleSubmit} setIsModalOpen={setIsModalOpen} loading={loading} setSelectedFiles={setSelectedFiles}/>
+          <CreateProductWrapper
+            formData={formData}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            setIsModalOpen={setIsModalOpen}
+            loading={loading}
+            setSelectedFiles={setSelectedFiles}
+          />
         ) : modalMode === "edit" ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-6">
-                <LetterHeadInput formData={formData} onChange={handleChange} />
-                <BuyInformation formData={formData} onChange={handleChange} />
-                <InventoryForm formData={formData} onChange={handleChange} />
-              </div>
-              <div className="flex flex-col gap-6">
-                <ProductIdentification formData={formData} onChange={handleChange} />
-                <CheckInput formData={formData} onChange={handleChange} />
-                <FormFileInput onFileChange={setSelectedFiles} />
-                {modalMode === "edit" && selectedItem?.attachments?.length > 0 && (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">File Lampiran Saat Ini:</p>
-                    <div className="space-y-1">
-                      {selectedItem.attachments.map((file: any) => (
-                        <p key={file.id} className="text-xs text-gray-600 dark:text-gray-300 truncate">📁 {file.fileName}</p>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
-              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Batal</Button>
+          <EditStockWrapper
+            handleSubmit={handleSubmit}
+            formData={formData}
+            handleChange={handleChange}
+            setSelectedFiles={setSelectedFiles}
+            setIsModalOpen={setIsModalOpen}
+            selectedItem={selectedItem}
+            loading={loading}
+            modalMode={modalMode}
+          />
+        ) : modalMode === "pemeriksaan" ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <CheckInput
+              formData={formData}
+              onChange={handleChange}
+              namaOptions={namaOptions}
+            />
+            <div className="flex justify-end gap-3 JSON">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Batal
+              </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Menyimpan..." : modalMode === "edit" ? "Perbarui Data" : "Simpan Data"}
+                {loading ? "Menyimpan..." : "Simpan Pemeriksaan"}
               </Button>
             </div>
           </form>
         ) : (
-          <DetailCardStock selectedItem={selectedItem} setIsModalOpen={setIsModalOpen}/>
+          <DetailCardStock
+            selectedItem={selectedItem}
+            setIsModalOpen={setIsModalOpen}
+          />
         )}
       </Modal>
 
-      <StockTable initialItems={initialItems} handleDelete={handleDelete} handleOpenDetail={handleOpenDetail} handleOpenEdit={handleOpenEdit}/>
+      <StockTable
+        initialItems={initialItems}
+        handleDelete={handleDelete}
+        handleOpenDetail={handleOpenDetail}
+        handleOpenEdit={handleOpenEdit}
+      />
     </>
   );
-}
+} 

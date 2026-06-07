@@ -31,6 +31,7 @@ export default function BuyInformation({ formData, onChange }: PurchaseInputProp
       <div className="space-y-6">
         <div>
           <DatePicker
+            defaultDate={formData.tanggalPembelian}
             id="tanggalPembelian"
             label="Tanggal Pembelian"
             placeholder="Pilih Tanggal"
@@ -41,6 +42,7 @@ export default function BuyInformation({ formData, onChange }: PurchaseInputProp
         </div>
         <div>
           <DatePicker
+            defaultDate={formData.tanggalTerimaBarang}
             id="tanggalTermaBarang"
             label="Tanggal Terima Barang"
             placeholder="Pilih Tanggal"
@@ -55,6 +57,7 @@ export default function BuyInformation({ formData, onChange }: PurchaseInputProp
           <Label>Kondisi Saat Diterima</Label>
           <div className="relative">
             <Select
+              defaultValue={formData.klasifikasi}
               options={kondisiOptions}
               placeholder="Pilih Kondisi"
               onChange={(value: string) => onChange("kondisiSaatDiterima", value)}
@@ -71,6 +74,7 @@ export default function BuyInformation({ formData, onChange }: PurchaseInputProp
           <Label>Klasifikasi Alat</Label>
           <div className="relative">
             <Select
+              defaultValue={formData.klasifikasi}
               options={klasifikasiOptions}
               placeholder="Pilih Klasifikasi"
               onChange={(value: string) => onChange("klasifikasi", value)}
