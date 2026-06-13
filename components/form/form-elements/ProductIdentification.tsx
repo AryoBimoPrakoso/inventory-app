@@ -22,6 +22,14 @@ export default function ProductIdentification({ formData, onChange }: ProductIde
           />
         </div>
         <div>
+          <Label>Jumlah Barang</Label>
+          <Input 
+            type="number" 
+            value={formData.stock || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange("stock", e.target.value)}
+          />
+        </div>
+        <div>
           <Label>Merk/Pabrik Pembuat</Label>
           <Input 
             type="text" 

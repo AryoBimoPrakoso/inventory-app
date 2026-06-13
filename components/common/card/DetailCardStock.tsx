@@ -58,29 +58,6 @@ export default function DetailCardStock({ selectedItem, setIsModalOpen }: Detail
               </span>
             </div>
           </div>
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800">
-            <h3 className="font-bold text-sm text-gray-400 uppercase mb-3 tracking-wider">
-              Inventarisasi
-            </h3>
-            <div className="grid grid-cols-2 gap-y-2 text-sm">
-              <span className="text-gray-500">Tanggal Inventaris:</span>
-              <span className="text-gray-900 dark:text-white font-medium">
-                {formatDateString(selectedItem?.tanggalInventaris)}
-              </span>
-              <span className="text-gray-500">Nomor Inventaris:</span>
-              <span className="text-gray-900 dark:text-white font-medium font-mono">
-                {selectedItem?.nomorInventaris || "-"}
-              </span>
-              <span className="text-gray-500">Lokasi Penempatan:</span>
-              <span className="text-gray-900 dark:text-white font-medium">
-                {selectedItem?.lokasi || "-"}
-              </span>
-              <span className="text-gray-500">Jadwal Kalibrasi:</span>
-              <span className="text-gray-900 dark:text-white font-medium">
-                {formatDateString(selectedItem?.tanggalPemeliharaanKalibrasi)}
-              </span>
-            </div>
-          </div>
         </div>
         <div className="space-y-6">
           <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800">

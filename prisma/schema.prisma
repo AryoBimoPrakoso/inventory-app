@@ -27,6 +27,7 @@ model Item {
   merk                          String?
   type                          String?
   sn                            String?
+  stock                         Int      @default(0)
 
   // Pembelian
   tanggalPembelian              DateTime?

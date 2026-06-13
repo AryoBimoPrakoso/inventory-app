@@ -29,6 +29,7 @@ export default function StockTable({
                 <th className="px-6 py-4">Nama Alat</th>
                 <th className="px-6 py-4">Merk / Type</th>
                 <th className="px-6 py-4">No Seri</th>
+                <th className="px-6 py-4">Jumlah Barang</th>
                 <th className="px-6 py-4">Kategori</th>
                 <th className="px-6 py-4">Status Kelayakan</th>
                 <th className="px-6 py-4 text-center">Aksi</th>
@@ -48,6 +49,9 @@ export default function StockTable({
                   </td>
                   <td className="px-6 py-4 font-mono text-xs">
                     {item.sn || "-"}
+                  </td>
+                  <td className="px-6 py-4">
+                    {item.stock || "-"}
                   </td>
                   <td className="px-6 py-4">
                     {formatCategory(item.klasifikasi || "-")}

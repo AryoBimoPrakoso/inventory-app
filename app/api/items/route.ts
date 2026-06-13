@@ -17,6 +17,9 @@ export async function POST(req: Request) {
     const jumlahHalamanRaw = formData.get("jumlahHalaman");
     const jumlahHalaman = jumlahHalamanRaw ? parseInt(jumlahHalamanRaw as string, 10) : null;
 
+    const stockValue = formData.get("stock");
+    const stock = stockValue ? parseInt(stockValue as string, 10) : null;
+
     const nama = formData.get("nama") as string;
     const merk = formData.get("merk") as string | null;
     const type = formData.get("type") as string | null;
@@ -55,6 +58,7 @@ export async function POST(req: Request) {
         nomorInventaris,
         lokasi,
         hasilInventaris,
+        stock,
         tanggalPemeliharaanKalibrasi: parseDate("tanggalPemeliharaanKalibrasi"),
       },
     });

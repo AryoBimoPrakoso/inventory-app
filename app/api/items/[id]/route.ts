@@ -72,6 +72,9 @@ export async function PUT(
     const jumlahHalamanRaw = formData.get("jumlahHalaman");
     const jumlahHalaman = jumlahHalamanRaw ? parseInt(jumlahHalamanRaw as string, 10) : null;
 
+    const stockValue = formData.get("stock");
+    const stock = stockValue ? parseInt(stockValue as string, 10) : null;
+
     const nama = formData.get("nama") as string;
     const merk = formData.get("merk") as string | null;
     const type = formData.get("type") as string | null;
@@ -110,6 +113,7 @@ export async function PUT(
         tanggalInventaris: parseDate("tanggalInventaris"),
         nomorInventaris,
         lokasi,
+        stock,
         tanggalPemeliharaanKalibrasi: parseDate("tanggalPemeliharaanKalibrasi"),
       },
     });
