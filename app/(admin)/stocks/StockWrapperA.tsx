@@ -39,6 +39,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
     merk: "",
     type: "",
     sn: "",
+    stock: 0,
     tanggalPembelian: "",
     tanggalTerimaBarang: "",
     kondisiSaatDiterima: "",
@@ -76,6 +77,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
           updatedForm.nama = barangTerpilih.nama || "";
           updatedForm.merk = barangTerpilih.merk || "";
           updatedForm.type = barangTerpilih.type || "";
+          updatedForm.stock = barangTerpilih.stock ?? 0;
           updatedForm.sn = barangTerpilih.sn || "";
           updatedForm.tanggalPembelian = barangTerpilih.tanggalPembelian ? new Date(barangTerpilih.tanggalPembelian).toISOString().split("T")[0] : "";
           updatedForm.tanggalTerimaBarang = barangTerpilih.tanggalTerimaBarang ? new Date(barangTerpilih.tanggalTerimaBarang).toISOString().split("T")[0] : "";
@@ -136,6 +138,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
       nama: item.nama || "",
       merk: item.merk || "",
       type: item.type || "",
+      stock: item.stock ?? 0,
       sn: item.sn || "",
       tanggalPembelian: formatDate(item.tanggalPembelian),
       tanggalTerimaBarang: formatDate(item.tanggalTerimaBarang),
