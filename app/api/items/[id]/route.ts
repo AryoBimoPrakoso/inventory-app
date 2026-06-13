@@ -73,7 +73,10 @@ export async function PUT(
     const jumlahHalaman = jumlahHalamanRaw ? parseInt(jumlahHalamanRaw as string, 10) : null;
 
     const stockValue = formData.get("stock");
-    const stock = stockValue ? parseInt(stockValue as string, 10) : null;
+    const stock = stockValue ? parseInt(stockValue as string, 10) : 0;
+
+    const minStockValue = formData.get("minimum_stock");
+    const minimumStock = minStockValue ? parseInt(minStockValue as string, 10) : 0;
 
     const nama = formData.get("nama") as string;
     const merk = formData.get("merk") as string | null;
@@ -114,6 +117,7 @@ export async function PUT(
         nomorInventaris,
         lokasi,
         stock,
+        minimum_stock: minimumStock,
         tanggalPemeliharaanKalibrasi: parseDate("tanggalPemeliharaanKalibrasi"),
       },
     });

@@ -37,6 +37,16 @@ export default function ProductIdentification({
           />
         </div>
         <div>
+          <Label>Minimum Stock</Label>
+          <Input
+            type="text"
+            value={formData.minimum_stock ?? ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onChange("minimum_stock", e.target.value.replace(/\D/g, ""))
+            }
+          />
+        </div>
+        <div>
           <Label>Merk/Pabrik Pembuat</Label>
           <Input
             type="text"

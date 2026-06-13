@@ -12,19 +12,28 @@ export async function POST(req: Request) {
     // 2. Ekstraksi text fields & parsing tipe data yang sesuai
     const nomor = formData.get("nomor") as string | null;
     const nomorRevisi = formData.get("nomorRevisi") as string | null;
-    
+
     // Pastikan jumlahHalaman di-parse ke Integer karena skema database mewajibkan Int
     const jumlahHalamanRaw = formData.get("jumlahHalaman");
-    const jumlahHalaman = jumlahHalamanRaw ? parseInt(jumlahHalamanRaw as string, 10) : null;
+    const jumlahHalaman = jumlahHalamanRaw
+      ? parseInt(jumlahHalamanRaw as string, 10)
+      : null;
 
     const stockValue = formData.get("stock");
-    const stock = stockValue ? parseInt(stockValue as string, 10) : null;
+    const stock = stockValue ? parseInt(stockValue as string, 10) : 0;
+
+    const minStockValue = formData.get("minimum_stock");
+    const minimumStock = minStockValue
+      ? parseInt(minStockValue as string, 10)
+      : 0;
 
     const nama = formData.get("nama") as string;
     const merk = formData.get("merk") as string | null;
     const type = formData.get("type") as string | null;
     const sn = formData.get("sn") as string | null;
-    const kondisiSaatDiterima = formData.get("kondisiSaatDiterima") as string | null;
+    const kondisiSaatDiterima = formData.get("kondisiSaatDiterima") as
+      | string
+      | null;
     const klasifikasi = formData.get("klasifikasi") as string | null;
     const hasilPengecekan = formData.get("hasilPengecekan") as string | null;
     const namaPemeriksa = formData.get("namaPemeriksa") as string | null;
@@ -58,6 +67,7 @@ export async function POST(req: Request) {
         nomorInventaris,
         lokasi,
         hasilInventaris,
+        minimumStock,
         stock,
         tanggalPemeliharaanKalibrasi: parseDate("tanggalPemeliharaanKalibrasi"),
       },
@@ -65,8 +75,12 @@ export async function POST(req: Request) {
 
     // 4. Proses File Attachment (jika ada file yang diunggah)
     const uploadedFiles = formData.getAll("files") as File[];
-    
-    if (uploadedFiles && uploadedFiles.length > 0 && uploadedFiles[0].size > 0) {
+
+    if (
+      uploadedFiles &&
+      uploadedFiles.length > 0 &&
+      uploadedFiles[0].size > 0
+    ) {
       for (const file of uploadedFiles) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
@@ -100,7 +114,7 @@ export async function POST(req: Request) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
@@ -123,7 +137,7 @@ export async function GET() {
 
     return NextResponse.json(
       { message: "Gagal mengambil data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

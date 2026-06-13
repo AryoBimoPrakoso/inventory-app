@@ -2,15 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import LetterHeadInput from "@/components/form/form-elements/LetterHeadInput";
-import FormFileInput from "@/components/form/form-elements/FormFileInput";
-import BuyInformation from "@/components/form/form-elements/BuyInformation";
-import ProductIdentification from "@/components/form/form-elements/ProductIdentification";
 import CheckInput from "@/components/form/form-elements/CheckInput";
-import InventoryForm from "@/components/form/form-elements/InventoryForm";
 import Button from "@/components/ui/button/Button";
 import Modal from "@/components/ui/modal/Modal";
-import { Plus, ClipboardCheck } from "lucide-react";
+import { Plus, Toolbox, ArrowRightLeft } from "lucide-react";
 import CreateProductWrapper from "@/components/form/wrapper/CreateStockWrapper";
 import StockTable from "@/components/common/table/StockTable";
 import DetailCardStock from "@/components/common/card/DetailCardStock";
@@ -20,7 +15,7 @@ interface ClientProps {
   initialItems: any[];
 }
 
-export default function StockInventaris({ initialItems }: ClientProps) {
+export default function StockWrapper({ initialItems }: ClientProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<
@@ -40,6 +35,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
     type: "",
     sn: "",
     stock: 0,
+    minimum_stock: 0,
     tanggalPembelian: "",
     tanggalTerimaBarang: "",
     kondisiSaatDiterima: "",
@@ -78,6 +74,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
           updatedForm.merk = barangTerpilih.merk || "";
           updatedForm.type = barangTerpilih.type || "";
           updatedForm.stock = barangTerpilih.stock ?? 0;
+          updatedForm.minimum_stock = barangTerpilih.minimum_stock ?? 0;
           updatedForm.sn = barangTerpilih.sn || "";
           updatedForm.tanggalPembelian = barangTerpilih.tanggalPembelian ? new Date(barangTerpilih.tanggalPembelian).toISOString().split("T")[0] : "";
           updatedForm.tanggalTerimaBarang = barangTerpilih.tanggalTerimaBarang ? new Date(barangTerpilih.tanggalTerimaBarang).toISOString().split("T")[0] : "";
@@ -139,6 +136,7 @@ export default function StockInventaris({ initialItems }: ClientProps) {
       merk: item.merk || "",
       type: item.type || "",
       stock: item.stock ?? 0,
+      minimum_stock: item.minimum_stock ?? 0,
       sn: item.sn || "",
       tanggalPembelian: formatDate(item.tanggalPembelian),
       tanggalTerimaBarang: formatDate(item.tanggalTerimaBarang),
@@ -242,11 +240,18 @@ export default function StockInventaris({ initialItems }: ClientProps) {
     <>
       <div className="flex justify-end gap-3 -mt-14 mb-8">
         <Button
+          variant="secondary"
+          onClick={handleOpenChecking}
+          className="flex items-center gap-2 w-full sm:w-auto"
+        >
+          <ArrowRightLeft className="w-4 h-4" /> Barang Masuk / Keluar
+        </Button>
+        <Button
           variant="outline"
           onClick={handleOpenChecking}
           className="flex items-center gap-2 w-full sm:w-auto"
         >
-          <ClipboardCheck className="w-4 h-4" /> Pemeriksaan Barang
+          <Toolbox className="w-4 h-4" /> Cek Kelayakan Barang
         </Button>
         <Button
           onClick={handleOpenCreate}

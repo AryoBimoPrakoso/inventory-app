@@ -1,6 +1,6 @@
 // app/inventaris/page.tsx (Atau lokasi page Anda)
 import { prisma } from "@/lib/prisma"; // Sesuaikan path prisma client Anda
-import StockInventaris from "./StockWrapperA";
+import StockWrapper from "../../../components/form/wrapper/StockWrapper";
 import Button from "@/components/ui/button/Button";
 import { Plus } from "lucide-react";
 
@@ -39,7 +39,7 @@ export default async function Page() {
       </div>
 
       {/* Oper data dari Prisma langsung ke Client Wrapper */}
-      <StockInventaris initialItems={initialItems} />
+      <StockWrapper initialItems={initialItems} />
     </div>
   );
 }
